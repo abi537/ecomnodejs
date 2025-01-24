@@ -9,10 +9,7 @@ const { dologin } = require('./user-helpers');
 const bcrypt = require('bcrypt');
 //const { ObjectId } = require('mongodb');
 
-const AdminSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
-});
+
 
 // Function to insert product data into the "product" collection
 async function insertProduct(productData) {
