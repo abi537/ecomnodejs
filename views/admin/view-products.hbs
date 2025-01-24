@@ -1,0 +1,57 @@
+<section>
+    <div class="container mt-5">
+        <div class="row">
+            <a href="/admin/add-product" style="width: 9rem; margin-left: auto;" class="btn btn-success ml-auto">
+                Add products
+            </a>
+        </div>
+
+        <table class="table mt-4" id="productstable">
+            <thead>
+                <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each product}}
+                <tr>
+                    <th scope="row">{{@index}}</th>
+                    <td>{{this.productname}}</td>
+                    <td>{{this.category}}</td>
+                    <td>{{this.description}}</td>
+                    <td>
+                        {{#if this.image}}
+                        <img src="{{this.image}}" alt="Product Image" style="max-width: 100px;">
+                        {{else}}
+                        <span>No Image</span>
+                        {{/if}}
+                    </td>
+                    <td>
+                        <a href="/admin/edit-product/{{this._id}}" class="btn btn-primary">Edit</a>
+
+                        <!-- Use a form for deleting to prevent accidental deletions -->
+                        <form action="/admin/delete-product" method="POST" style="display:inline;">
+                            <input type="hidden" name="id" value="{{this._id}}">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</section>
+<script>
+    $( function () {
+    $('#productstable').DataTable();
+} );
+
+
+</script>

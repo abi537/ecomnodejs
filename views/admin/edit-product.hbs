@@ -1,0 +1,57 @@
+<section>
+<div class="container mt-4">
+    <div class="row ">
+        <div class="col-md-6">
+    <h1 class="text-center">Edit  Product</h1>
+    <form action="/admin/edit-product/{{response._id}}" method="POST" enctype="multipart/form-data">         
+    <div class="form-group">             
+        <label for="name">Product Name:</label>             
+        <input type="text" class="form-control" id="name" name="productname"value="{{response.productname}}" required>         
+    </div>         
+    <div class="form-group">             
+        <label for="category">Category:</label>             
+        <input type="text" class="form-control" id="category" name="category"value="{{response.category}}" required>         
+    </div>          
+    <div class="form-group">             
+        <label for="price">Price:</label>             
+        <input type="number" class="form-control" id="price" name="price"value="{{response.price}}" required>         
+    </div>         
+    <div class="form-group">             
+        <label for="description">Description:</label>             
+        <textarea class="form-control" id="description" name="description" rows="4" required>{{response.description}}</textarea>         
+    </div>         
+    <br>    
+   <div class="form-group">
+    <label>Current Image:</label><br>
+    {{#if response.image}}
+    
+
+
+        <img id="currentImage" src="/{{response.image}}" alt="Product Image" style="width: 200px; height: auto;">
+    {{else}}
+        <p>No image available</p>
+    {{/if}}
+</div>
+
+
+    <div class="form-group">     
+        <label for="exampleFormControlFile1">Image</label><br>  
+       
+        <input type="file" class="form-control-file" id="exampleFormControlFile1" name="image" onchange="viewImage(event)">   
+    </div>  
+    <br>                         
+    <button type="submit" class="btn btn-success">Submit</button>     
+</form>
+
+
+<script>
+     function viewImage(event) {
+        const fileInput = event.target.files[0]; // Get the selected file
+        const imagePreview = document.getElementById('currentImage'); // Get the current image element
+
+        if (fileInput) {
+            // Set the preview image source to the selected file
+            imagePreview.src = URL.createObjectURL(fileInput);
+        }
+     }
+</script>

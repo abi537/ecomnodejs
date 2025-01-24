@@ -1,0 +1,121 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<section>
+    <div class="container">
+        <form id="checkout-form">
+            <div class="row">
+                <div class="col-md-6 mt-5" style="margin-right: 15px;">
+                    <h2>Enter Delivery Details</h2>
+                    <div class="mt-4">
+                        <label for="Address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="Address" name="Address" placeholder="Enter your Address" required>
+                        <label for="pincode" class="form-label">Pincode</label>
+                        <input type="number" class="form-control" id="pincode" name="pincode" placeholder="Enter your Pincode" required>
+                        <label for="mobile" class="form-label">Mobile No</label>
+                        <input type="number" class="form-control" id="mobile" name="mobile" placeholder="Enter your Mobile Number" required>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mt-5 card" style="margin-left: 10px;">
+                    <div class="container mt-5 ml-5 checkout">
+                        <h5>Total Amount: Rs.{{sum}}</h5>
+                        <hr>
+                        <div class="payment">
+                            <p>Payment methods</p>
+                            <label><input type="radio" name="payment-method" value="COD" checked> COD</label><br>
+                            <label><input type="radio" name="payment-method" value="ONLINE"> Online payment</label><br><br>
+                            <input type="text" name="userid" value="{{user._id}}" hidden>
+                            <button class="btn btn-primary"  id="" type="submit">Checkout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    // Handle form submission
+    $("#checkout-form").on("submit", function (e) {
+        e.preventDefault(); // Prevent the form from submitting normally
+        console.log("Form submission intercepted");
+
+        $.ajax({
+            url: '/place-order', // Backend endpoint
+            method: 'POST',
+            data: $('#checkout-form').serialize(),
+            dataType: 'json',
+            success: function (response) {
+                console.log('Server response:', response);
+                if (response.codpayment) {
+                    location.href = '/order-success';  // Redirect on COD payment
+                } else {
+                    razorpaypayment(response);  // Trigger Razorpay if not COD
+                }
+            },
+            error: function (error) {
+                console.error('Error in AJAX request:', error);
+            }
+        });
+    });
+
+    // Razorpay payment setup
+    function razorpaypayment(order) {
+        console.log("Razorpay data:", order);
+
+        var options = {
+            "key": "rzp_test_jEGm7l4y3shnFP", // Replace with your Razorpay Key ID
+            "amount": order.amount, // Amount in paise (e.g., 50000 for Rs. 500)
+            "currency": "INR",
+            "name": "ANA",
+            "description": "Test Transaction",
+            "image": "https://example.com/your_logo", // Optional logo URL
+            "order_id": order.id, // Order ID from backend
+            "handler": function (response) {
+                console.log("Payment handler triggered", response);
+               // alert(response.razorpay_payment_id);
+              //  alert(response.razorpay_order_id);
+               // alert(response.razorpay_signature);
+                verifypayment(response, order); // Verify payment with backend
+            },
+            "prefill": {
+                "name": "Gaurav Kumar",
+                "email": "gaurav.kumar@example.com",
+                "contact": "9000090000"
+            },
+            "notes": {
+                "address": "Razorpay Corporate Office"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+
+        var rzp1 = new Razorpay(options); // Create the Razorpay instance
+        rzp1.open(); // Open the Razorpay modal
+    }
+
+    // Verify payment status with backend
+    function verifypayment(payment, order) {
+        console.log("Verifying payment:", payment, order);
+        $.ajax({
+            url: '/verify-payment',
+            method: 'POST',
+            data: {
+                 payment,
+                 order
+            },
+            success: function (response) {
+                if(response.status){
+                     location.href = '/order-success'; 
+                }else{
+                    alert('payment failed')
+                }
+                //console.log("Payment verification response:", response);
+                // Handle the response (e.g., update order status)
+            },
+            error: function (error) {
+                console.error('Error during payment verification:', error);
+            }
+        });
+    }
+</script>

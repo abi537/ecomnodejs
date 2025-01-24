@@ -1,0 +1,134 @@
+<section>
+    <div class="container">
+        <table class="table mt-5">
+
+        <thead>
+            <tr>
+                <th scope="col">Items</th>
+                <th scope="col">Title</th>
+                <th >Price</th>
+                <th scope="col">Quantity</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each product}}
+            <tr>
+               
+                <td><img style="width: 90px;height: 90px;" src="{{this.product.image}}" alt="Product Image"></td>
+                
+                <td>{{this.product.productname}}</td>
+                <td>Rs.{{this.product.price}}</td>
+                
+                <td>
+                
+                 <button class="btn btn-secondary btn-lg me-3" onclick="changequantity('{{this._id}}','{{this.product._id}}','{{../user._id}}',-1)">-</button> 
+                <span id="{{this.product._id}}"> {{this.quantity}}</span>  
+                 <button class="btn btn-secondary btn-lg ms-3" onclick="changequantity('{{this._id}}','{{this.product._id}}','{{../user._id}}',1)">+</button>
+
+
+    
+ 
+
+                </td>
+                <td>
+                    <a href="" class="btn btn-danger">Remove</a>
+                </td>
+
+
+
+            </tr>
+            {{/each}}
+
+
+
+
+        </thead>
+
+   
+
+</table>
+
+<div style="text-align: right;padding-right: 8rem  ">
+    
+    <h3 class=" mr-5 mt-5">Total Rs.<span id="total">{{totalvalue}}</span> </h3>
+    <a href="/place-order"class="btn btn-success  btn-lg btn-block " style="width: 12rem;">Place Order</a>
+</div>
+ </div>
+
+</section>
+
+<script>
+
+//function sanitizeId(id) {
+   // return id.replace(/[^a-fA-F0-9]/g, ''); // Removes non-hexadecimal characters
+//}
+//function sanitizeId(id) {
+   //return id.match(/^[a-fA-F0-9]{24}$/) ? id : '';
+//}
+
+
+
+    function changequantity(cartid,proid,userid,count){
+         //cartid = sanitizeId(cartid);
+         //proid = sanitizeId(proid);
+        // userid= sanitizeId(userid);
+
+         let quantity=parseInt(document.getElementById(proid).innerHTML)
+          
+
+         count=parseInt(count)
+
+           console.log('sanitizeId called with id:', userid, 'Type:', typeof userid);
+
+    console.log('Sanitized Cart ID:', cartid);
+    console.log('Sanitized Product ID:', proid)
+    console.log('Sanitized User ID:', userid);
+    console.log('$$$$',userid)//nott
+        $.ajax({
+            url:'/change-product-quantity',
+            data:{
+                user:userid,
+                cart:cartid,
+                product:proid,
+                count:count,
+                quantity:quantity
+            },
+            method:'POST',
+            success:(response)=>{
+                if(response.removeproduct){
+                    console.log('post if')
+                    alert('product removed from the cart')
+                    location.reload()
+                }else{
+                     console.log('post else')
+                     console.log('theeeekkaanall',response)
+                    console.log('theeeekkaa',response.total)
+                    document.getElementById(proid).innerHTML=quantity+count
+                    //document.getElementById('total').innerHTML=response.total
+
+                     const totalElement = document.getElementById('total');
+
+                    
+                     totalElement.innerHTML = `Rs. ${response.total.toLocaleString('en-IN')}`; // Replace content with updated total
+                     console.log('Updated Total HTML:', totalElement.innerHTML);
+
+
+
+                 // const newQuantity = quantity + count;
+               // quantityElement.innerHTML = newQuantity;
+
+                // Update total dynamically
+               // totalElement.innerHTML = `Rs.${response.total.toLocaleString('en-IN')}`;
+
+                     //alert('add one product')
+                     // location.reload()
+               
+                  
+                }
+            }
+        })
+    }
+
+
+</script>

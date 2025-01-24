@@ -1,0 +1,44 @@
+<section>
+    <div class="container mt-5">
+        <div class="row">
+            
+        </div>
+
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Pincode</th>
+                    <th scope="col">Mobile</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">payment</th>
+                     <th scope="col">status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each orders}}
+                <tr>
+                    
+                    <td>{{this.delivarydetails.date}}</td>
+                    <td>{{this.delivarydetails.address}}</td>
+                    <td>{{this.delivarydetails.pincode}}</td>
+                     <td>{{this.delivarydetails.mobile}}</td>
+                      <td>{{this.delivarydetails.totalamount}}</td>
+                      <td>{{this.paymentmethod}}</td>
+                      <td>{{this.status}}</td>
+
+
+                    
+                    <td>
+                        <a href="/view-order-products/{{this._id}}" class="btn btn-primary">View product</a>
+
+                        <!-- Use a form for deleting to prevent accidental deletions -->
+                        
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</section>
